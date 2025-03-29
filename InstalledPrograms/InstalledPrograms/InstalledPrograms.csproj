@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows7.0</TargetFramework>
+	  <RollForward>Major</RollForward>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+	  <PublishAot>true</PublishAot>
+	  <_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
+	  <XmlResolverIsNetworkingEnabledByDefault>false</XmlResolverIsNetworkingEnabledByDefault>
+	  <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+	  <OptimizationPreference>Size</OptimizationPreference>
+	  <InvariantGlobalization>true</InvariantGlobalization>
+	  <StackTraceSupport>false</StackTraceSupport>
+	  <UseSystemResourceKeys>true</UseSystemResourceKeys>
+	  <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
+	  <CustomResourceTypesSupport>true</CustomResourceTypesSupport>
+	  <IlcGenerateMstatFile>true</IlcGenerateMstatFile>
+	  <IlcGenerateDgmlFile>true</IlcGenerateDgmlFile>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<RuntimeHostConfigurationOption Include="System.Windows.Forms.PictureBox.UseWebRequest" Value="false" Trim="true" />
+
+		<TrimmerRootDescriptor Include="ILLink.Descriptors.xml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<IlcArg Include="--substitution:ILLink.SizeHacks.xml" />
+	</ItemGroup>
+</Project>
