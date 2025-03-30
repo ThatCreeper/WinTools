@@ -42,6 +42,7 @@ partial class Form1
         statusStrip1 = new StatusStrip();
         statusProgramsFound = new ToolStripStatusLabel();
         statusProgramSize = new ToolStripStatusLabel();
+        sourceChoice = new ComboBox();
         ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
         statusStrip1.SuspendLayout();
         SuspendLayout();
@@ -63,12 +64,12 @@ partial class Form1
         dataGridView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
         dataGridView1.Columns.AddRange(new DataGridViewColumn[] { ProgamListID, IconCol, ProgName, RegKey, UninstallBtn, OpenInRegEdit, ProgramSize, AuthorText, VersionText });
-        dataGridView1.Location = new Point(17, 20);
+        dataGridView1.Location = new Point(17, 53);
         dataGridView1.Margin = new Padding(4, 5, 4, 5);
         dataGridView1.Name = "dataGridView1";
         dataGridView1.ReadOnly = true;
         dataGridView1.RowHeadersWidth = 62;
-        dataGridView1.Size = new Size(1109, 568);
+        dataGridView1.Size = new Size(1109, 535);
         dataGridView1.TabIndex = 1;
         // 
         // ProgamListID
@@ -167,11 +168,24 @@ partial class Form1
         statusProgramSize.Size = new Size(77, 25);
         statusProgramSize.Text = "0.00 MB";
         // 
+        // sourceChoice
+        // 
+        sourceChoice.AutoCompleteSource = AutoCompleteSource.ListItems;
+        sourceChoice.Items.AddRange(new object[] { "Control Panel", "Winget" });
+        sourceChoice.Location = new Point(17, 12);
+        sourceChoice.Name = "sourceChoice";
+        sourceChoice.Size = new Size(1107, 33);
+        sourceChoice.TabIndex = 3;
+        sourceChoice.Tag = "";
+        sourceChoice.Text = "Control Panel";
+        sourceChoice.SelectedIndexChanged += sourceChoice_SelectedIndexChanged;
+        // 
         // Form1
         // 
         AutoScaleDimensions = new SizeF(10F, 25F);
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(1143, 750);
+        Controls.Add(sourceChoice);
         Controls.Add(statusStrip1);
         Controls.Add(dataGridView1);
         Controls.Add(richTextBox1);
@@ -202,4 +216,5 @@ partial class Form1
     private StatusStrip statusStrip1;
     private ToolStripStatusLabel statusProgramsFound;
     private ToolStripStatusLabel statusProgramSize;
+    private ComboBox sourceChoice;
 }

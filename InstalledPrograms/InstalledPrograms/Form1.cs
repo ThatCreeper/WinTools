@@ -5,6 +5,8 @@ namespace InstalledPrograms;
 
 public partial class Form1 : Form
 {
+    bool currentlyWinget = false;
+
     public Form1()
     {
         InitializeComponent();
@@ -29,7 +31,7 @@ public partial class Form1 : Form
             }
         };
     }
-    
+
     public void LoadPrograms()
     {
         Program.programs.Clear();
@@ -40,6 +42,59 @@ public partial class Form1 : Form
     }
 
     private void LoadKeys()
+    {
+        if (currentlyWinget)
+            LoadWingetKeys();
+        else
+            LoadRegistryKeys();
+    }
+
+    private void LoadWingetKeys()
+    {
+        ProcessStartInfo startInfo = new ProcessStartInfo()
+        {
+            FileName = $"C:\\Users\\{Environment.UserName}\\AppData\\Local\\Microsoft\\WindowsApps\\winget.exe",
+            Arguments = "list",
+            RedirectStandardOutput = true,
+            StandardOutputEncoding = System.Text.Encoding.UTF8,
+            CreateNoWindow = true
+        };
+        Process proc = Process.Start(startInfo)!;
+        proc.OutputDataReceived += (sender, data) => Log(data.Data ?? "");
+        string? s;
+        int idxId = 0;
+        int idxVer = 0;
+        while ((s = proc.StandardOutput.ReadLine()) != null)
+        {
+            if (!s.StartsWith("Name"))
+                continue;
+            idxId = s.IndexOf('I');
+            idxVer = s.IndexOf('V');
+            break;
+        }
+        proc.StandardOutput.ReadLine();
+        List<List<string>> progs = proc.StandardOutput.ReadToEnd()
+            .Split('\n')
+            .AsParallel()
+            .Where(s => s != "")
+            .Select(s => new List<string>([
+                s.Substring(0, idxId).Trim(),
+                s.Substring(idxId, idxVer - idxId).Trim(),
+                s.Substring(idxVer).Split(' ')[0]]))
+            .ToList();
+        foreach (List<string> line in progs)
+        {
+            Program.programs.Add(new WingetProgramItem(
+                key: line[1],
+                dataGridView1,
+                Program.programs.Count,
+                name: line[0],
+                version: line[2]));
+        }
+        SetStatusCount();
+    }
+
+    private void LoadRegistryKeys()
     {
         RegistryKey? systemKey = Registry.LocalMachine?.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall");
         RegistryKey? userKey = Registry.CurrentUser?.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall");
@@ -108,5 +163,11 @@ public partial class Form1 : Form
     {
         richTextBox1.AppendText($"{what}\n");
         richTextBox1.Update();
+    }
+
+    private void sourceChoice_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        currentlyWinget = sourceChoice.SelectedIndex == 1;
+        LoadPrograms();
     }
 }
