@@ -30,7 +30,8 @@ public partial class Form1 : Form
         {
             FileName = "C:\\msys64\\usr\\bin\\pacman.exe",
             Arguments = "-Qe",
-            RedirectStandardOutput = true
+            RedirectStandardOutput = true,
+            CreateNoWindow = true
         };
         Process process = Process.Start(info)!;
         process.WaitForExit();
