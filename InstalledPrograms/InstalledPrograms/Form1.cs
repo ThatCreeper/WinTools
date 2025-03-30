@@ -59,7 +59,7 @@ public partial class Form1 : Form
         if (keys == null) return;
         foreach (string key in keys)
         {
-            Program.programs.Add(new ProgramItem(key, dataGridView1, Program.programs.Count, isUserLocal));
+            Program.programs.Add(new RegistryProgramItem(key, dataGridView1, Program.programs.Count, isUserLocal));
         }
     }
 
@@ -71,7 +71,7 @@ public partial class Form1 : Form
         {
             try
             {
-                program.Process(program.userlocal ? userKey : systemKey);
+                program.Process(systemKey, userKey);
             }
             catch (Exception e)
             {
