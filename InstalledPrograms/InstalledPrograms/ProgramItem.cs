@@ -66,4 +66,22 @@ internal abstract class ProgramItem
             dataGridView1.Update();
         });
     }
+
+    public bool FzfSegment(string segment)
+    {
+        return version.ToLower().Contains(segment)
+            || key.ToLower().Contains(segment)
+            || displayName.ToLower().Contains(segment)
+            || author.ToLower().Contains(segment);
+    }
+
+    public bool Fzf(string against)
+    {
+        foreach (string part in against.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            if (!FzfSegment(part))
+                return false;
+        }
+        return true;
+    }
 }

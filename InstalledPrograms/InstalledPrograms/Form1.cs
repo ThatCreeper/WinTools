@@ -47,6 +47,7 @@ public partial class Form1 : Form
             LoadWingetKeys();
         else
             LoadRegistryKeys();
+        Invoke(() => filterBox_TextChanged(this, null));
     }
 
     private void LoadWingetKeys()
@@ -169,5 +170,16 @@ public partial class Form1 : Form
     {
         currentlyWinget = sourceChoice.SelectedIndex == 1;
         LoadPrograms();
+    }
+
+    private void filterBox_TextChanged(object sender, EventArgs? e)
+    {
+        string filter = filterBox.Text.ToLower();
+        foreach (DataGridViewRow row in dataGridView1.Rows)
+        {
+            row.Visible = filter == ""
+                ? true
+                : Program.programs[(int)row.Cells[0].Value].Fzf(filter);
+        }
     }
 }

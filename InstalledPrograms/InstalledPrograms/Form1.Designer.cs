@@ -43,6 +43,7 @@ partial class Form1
         statusProgramsFound = new ToolStripStatusLabel();
         statusProgramSize = new ToolStripStatusLabel();
         sourceChoice = new ComboBox();
+        filterBox = new TextBox();
         ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
         statusStrip1.SuspendLayout();
         SuspendLayout();
@@ -50,10 +51,9 @@ partial class Form1
         // richTextBox1
         // 
         richTextBox1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-        richTextBox1.Location = new Point(17, 598);
-        richTextBox1.Margin = new Padding(4, 5, 4, 5);
+        richTextBox1.Location = new Point(12, 359);
         richTextBox1.Name = "richTextBox1";
-        richTextBox1.Size = new Size(1107, 129);
+        richTextBox1.Size = new Size(776, 79);
         richTextBox1.TabIndex = 0;
         richTextBox1.Text = "";
         // 
@@ -64,12 +64,11 @@ partial class Form1
         dataGridView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
         dataGridView1.Columns.AddRange(new DataGridViewColumn[] { ProgamListID, IconCol, ProgName, RegKey, UninstallBtn, OpenInRegEdit, ProgramSize, AuthorText, VersionText });
-        dataGridView1.Location = new Point(17, 53);
-        dataGridView1.Margin = new Padding(4, 5, 4, 5);
+        dataGridView1.Location = new Point(12, 41);
         dataGridView1.Name = "dataGridView1";
         dataGridView1.ReadOnly = true;
         dataGridView1.RowHeadersWidth = 62;
-        dataGridView1.Size = new Size(1109, 535);
+        dataGridView1.Size = new Size(776, 312);
         dataGridView1.TabIndex = 1;
         // 
         // ProgamListID
@@ -150,46 +149,59 @@ partial class Form1
         // 
         statusStrip1.ImageScalingSize = new Size(24, 24);
         statusStrip1.Items.AddRange(new ToolStripItem[] { statusProgramsFound, statusProgramSize });
-        statusStrip1.Location = new Point(0, 718);
+        statusStrip1.Location = new Point(0, 428);
         statusStrip1.Name = "statusStrip1";
-        statusStrip1.Size = new Size(1143, 32);
+        statusStrip1.Padding = new Padding(1, 0, 10, 0);
+        statusStrip1.Size = new Size(800, 22);
         statusStrip1.TabIndex = 2;
         statusStrip1.Text = "statusStrip1";
         // 
         // statusProgramsFound
         // 
         statusProgramsFound.Name = "statusProgramsFound";
-        statusProgramsFound.Size = new Size(160, 25);
+        statusProgramsFound.Size = new Size(104, 17);
         statusProgramsFound.Text = "0 Programs Found";
         // 
         // statusProgramSize
         // 
         statusProgramSize.Name = "statusProgramSize";
-        statusProgramSize.Size = new Size(77, 25);
+        statusProgramSize.Size = new Size(49, 17);
         statusProgramSize.Text = "0.00 MB";
         // 
         // sourceChoice
         // 
+        sourceChoice.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         sourceChoice.AutoCompleteSource = AutoCompleteSource.ListItems;
         sourceChoice.Items.AddRange(new object[] { "Control Panel", "Winget" });
-        sourceChoice.Location = new Point(17, 12);
+        sourceChoice.Location = new Point(402, 11);
+        sourceChoice.Margin = new Padding(2);
         sourceChoice.Name = "sourceChoice";
-        sourceChoice.Size = new Size(1107, 33);
+        sourceChoice.Size = new Size(386, 23);
         sourceChoice.TabIndex = 3;
         sourceChoice.Tag = "";
         sourceChoice.Text = "Control Panel";
         sourceChoice.SelectedIndexChanged += sourceChoice_SelectedIndexChanged;
         // 
+        // filterBox
+        // 
+        filterBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        filterBox.Location = new Point(12, 11);
+        filterBox.Name = "filterBox";
+        filterBox.PlaceholderText = "Filter";
+        filterBox.Size = new Size(386, 23);
+        filterBox.TabIndex = 4;
+        filterBox.TextChanged += filterBox_TextChanged;
+        // 
         // Form1
         // 
-        AutoScaleDimensions = new SizeF(10F, 25F);
+        AutoScaleDimensions = new SizeF(7F, 15F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(1143, 750);
+        ClientSize = new Size(800, 450);
+        Controls.Add(filterBox);
         Controls.Add(sourceChoice);
         Controls.Add(statusStrip1);
         Controls.Add(dataGridView1);
         Controls.Add(richTextBox1);
-        Margin = new Padding(4, 5, 4, 5);
         Name = "Form1";
         Text = "Program Listing";
         Load += Form1_Load;
@@ -217,4 +229,5 @@ partial class Form1
     private ToolStripStatusLabel statusProgramsFound;
     private ToolStripStatusLabel statusProgramSize;
     private ComboBox sourceChoice;
+    private TextBox filterBox;
 }
