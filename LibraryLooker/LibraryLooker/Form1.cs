@@ -2,9 +2,10 @@ using System.Diagnostics;
 
 namespace LibraryLooker;
 
-public partial class Form1 : Form
+public partial class Form1 : Form, IDisposable
 {
     BindingSource binding = new BindingSource();
+    Thread t;
 
     public Form1()
     {
@@ -12,6 +13,12 @@ public partial class Form1 : Form
     }
 
     private void Form1_Load(object sender, EventArgs e)
+    {
+        Thread t = new Thread(LoadThread);
+        t.Start();
+    }
+
+    private void LoadThread()
     {
         Try(Dub);
         Try(Pip);
@@ -34,11 +41,10 @@ public partial class Form1 : Form
             CreateNoWindow = true
         };
         Process process = Process.Start(info)!;
-        process.WaitForExit();
-        string[] libs = process.StandardOutput.ReadToEnd().Split('\n').Select(s => s.Split(' ')[0]).ToArray();
-        foreach (string lib in libs)
+        string? line;
+        while ((line = process.StandardOutput.ReadLine()) != null)
         {
-            AddLibrary(lib, "msys");
+            AddLibrary(line.Split(' ')[0], "msys");
         }
     }
 
@@ -134,7 +140,7 @@ public partial class Form1 : Form
 
     private void AddLibrary(string name, string source)
     {
-        dataGridView1.Rows.Add([name, source]);
+        Invoke(() => dataGridView1.Rows.Add([name, source]));
     }
 
     private string AppData => $"C:\\Users\\{Environment.UserName}\\AppData";
