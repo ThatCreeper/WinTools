@@ -39,15 +39,20 @@ partial class Form1
         ProgramSize = new DataGridViewTextBoxColumn();
         AuthorText = new DataGridViewTextBoxColumn();
         VersionText = new DataGridViewTextBoxColumn();
+        statusStrip1 = new StatusStrip();
+        statusProgramsFound = new ToolStripStatusLabel();
+        statusProgramSize = new ToolStripStatusLabel();
         ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+        statusStrip1.SuspendLayout();
         SuspendLayout();
         // 
         // richTextBox1
         // 
         richTextBox1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-        richTextBox1.Location = new Point(12, 359);
+        richTextBox1.Location = new Point(17, 598);
+        richTextBox1.Margin = new Padding(4, 5, 4, 5);
         richTextBox1.Name = "richTextBox1";
-        richTextBox1.Size = new Size(776, 79);
+        richTextBox1.Size = new Size(1107, 129);
         richTextBox1.TabIndex = 0;
         richTextBox1.Text = "";
         // 
@@ -58,23 +63,28 @@ partial class Form1
         dataGridView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
         dataGridView1.Columns.AddRange(new DataGridViewColumn[] { ProgamListID, IconCol, ProgName, RegKey, UninstallBtn, OpenInRegEdit, ProgramSize, AuthorText, VersionText });
-        dataGridView1.Location = new Point(12, 12);
+        dataGridView1.Location = new Point(17, 20);
+        dataGridView1.Margin = new Padding(4, 5, 4, 5);
         dataGridView1.Name = "dataGridView1";
         dataGridView1.ReadOnly = true;
-        dataGridView1.Size = new Size(776, 341);
+        dataGridView1.RowHeadersWidth = 62;
+        dataGridView1.Size = new Size(1109, 568);
         dataGridView1.TabIndex = 1;
         // 
         // ProgamListID
         // 
         ProgamListID.HeaderText = "ID";
+        ProgamListID.MinimumWidth = 8;
         ProgamListID.Name = "ProgamListID";
         ProgamListID.ReadOnly = true;
         ProgamListID.ToolTipText = "Not organized by Windows";
         ProgamListID.Visible = false;
+        ProgamListID.Width = 150;
         // 
         // IconCol
         // 
         IconCol.HeaderText = "Icon";
+        IconCol.MinimumWidth = 8;
         IconCol.Name = "IconCol";
         IconCol.ReadOnly = true;
         IconCol.Width = 48;
@@ -82,57 +92,98 @@ partial class Form1
         // ProgName
         // 
         ProgName.HeaderText = "Name";
+        ProgName.MinimumWidth = 8;
         ProgName.Name = "ProgName";
         ProgName.ReadOnly = true;
+        ProgName.Width = 150;
         // 
         // RegKey
         // 
         RegKey.HeaderText = "Key";
+        RegKey.MinimumWidth = 8;
         RegKey.Name = "RegKey";
         RegKey.ReadOnly = true;
+        RegKey.Width = 150;
         // 
         // UninstallBtn
         // 
         UninstallBtn.HeaderText = "Uninstall";
+        UninstallBtn.MinimumWidth = 8;
         UninstallBtn.Name = "UninstallBtn";
         UninstallBtn.ReadOnly = true;
+        UninstallBtn.Width = 150;
         // 
         // OpenInRegEdit
         // 
         OpenInRegEdit.HeaderText = "RegEdit";
+        OpenInRegEdit.MinimumWidth = 8;
         OpenInRegEdit.Name = "OpenInRegEdit";
         OpenInRegEdit.ReadOnly = true;
+        OpenInRegEdit.Width = 150;
         // 
         // ProgramSize
         // 
         ProgramSize.HeaderText = "Size";
+        ProgramSize.MinimumWidth = 8;
         ProgramSize.Name = "ProgramSize";
         ProgramSize.ReadOnly = true;
+        ProgramSize.Width = 150;
         // 
         // AuthorText
         // 
         AuthorText.HeaderText = "Publisher";
+        AuthorText.MinimumWidth = 8;
         AuthorText.Name = "AuthorText";
         AuthorText.ReadOnly = true;
+        AuthorText.Width = 150;
         // 
         // VersionText
         // 
         VersionText.HeaderText = "Version";
+        VersionText.MinimumWidth = 8;
         VersionText.Name = "VersionText";
         VersionText.ReadOnly = true;
+        VersionText.Width = 150;
+        // 
+        // statusStrip1
+        // 
+        statusStrip1.ImageScalingSize = new Size(24, 24);
+        statusStrip1.Items.AddRange(new ToolStripItem[] { statusProgramsFound, statusProgramSize });
+        statusStrip1.Location = new Point(0, 718);
+        statusStrip1.Name = "statusStrip1";
+        statusStrip1.Size = new Size(1143, 32);
+        statusStrip1.TabIndex = 2;
+        statusStrip1.Text = "statusStrip1";
+        // 
+        // statusProgramsFound
+        // 
+        statusProgramsFound.Name = "statusProgramsFound";
+        statusProgramsFound.Size = new Size(160, 25);
+        statusProgramsFound.Text = "0 Programs Found";
+        // 
+        // statusProgramSize
+        // 
+        statusProgramSize.Name = "statusProgramSize";
+        statusProgramSize.Size = new Size(77, 25);
+        statusProgramSize.Text = "0.00 MB";
         // 
         // Form1
         // 
-        AutoScaleDimensions = new SizeF(7F, 15F);
+        AutoScaleDimensions = new SizeF(10F, 25F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(800, 450);
+        ClientSize = new Size(1143, 750);
+        Controls.Add(statusStrip1);
         Controls.Add(dataGridView1);
         Controls.Add(richTextBox1);
+        Margin = new Padding(4, 5, 4, 5);
         Name = "Form1";
         Text = "Program Listing";
         Load += Form1_Load;
         ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+        statusStrip1.ResumeLayout(false);
+        statusStrip1.PerformLayout();
         ResumeLayout(false);
+        PerformLayout();
     }
 
     #endregion
@@ -148,4 +199,7 @@ partial class Form1
     private DataGridViewTextBoxColumn ProgramSize;
     private DataGridViewTextBoxColumn AuthorText;
     private DataGridViewTextBoxColumn VersionText;
+    private StatusStrip statusStrip1;
+    private ToolStripStatusLabel statusProgramsFound;
+    private ToolStripStatusLabel statusProgramSize;
 }

@@ -2,32 +2,25 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows7.0</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
 	  <RollForward>Major</RollForward>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
-	  <PublishAot>true</PublishAot>
-	  <_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
-	  <XmlResolverIsNetworkingEnabledByDefault>false</XmlResolverIsNetworkingEnabledByDefault>
-	  <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
-	  <OptimizationPreference>Size</OptimizationPreference>
-	  <InvariantGlobalization>true</InvariantGlobalization>
-	  <StackTraceSupport>false</StackTraceSupport>
-	  <UseSystemResourceKeys>true</UseSystemResourceKeys>
-	  <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
-	  <CustomResourceTypesSupport>true</CustomResourceTypesSupport>
-	  <IlcGenerateMstatFile>true</IlcGenerateMstatFile>
-	  <IlcGenerateDgmlFile>true</IlcGenerateDgmlFile>
   </PropertyGroup>
 
-	<ItemGroup>
-		<RuntimeHostConfigurationOption Include="System.Windows.Forms.PictureBox.UseWebRequest" Value="false" Trim="true" />
+  <ItemGroup>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
 
-		<TrimmerRootDescriptor Include="ILLink.Descriptors.xml" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<IlcArg Include="--substitution:ILLink.SizeHacks.xml" />
-	</ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
 </Project>

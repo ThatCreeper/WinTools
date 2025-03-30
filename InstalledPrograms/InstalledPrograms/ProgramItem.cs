@@ -12,11 +12,13 @@ using System.Threading.Tasks;
 namespace InstalledPrograms;
 internal class ProgramItem
 {
+    public bool userlocal;
     public string key;
     public string displayName = "[Loading]";
     public string? uninstallPath = null;
     public bool IsUninstallable => uninstallPath != null;
     public string installSize = "Loading";
+    public long installSizeBytes = 0;
     public string? installDirectory = null;
     public int progListId;
     public string author = "Loading";
@@ -27,14 +29,15 @@ internal class ProgramItem
     private int row;
     bool alreadyErrored = false;
 
-    public ProgramItem(string key, DataGridView dataGridView1, int listId)
+    public ProgramItem(string key, DataGridView dataGridView1, int listId, bool userlocal)
     {
         this.key = key;
         this.dataGridView1 = dataGridView1;
         this.progListId = listId;
+        this.userlocal = userlocal;
         dataGridView1.Invoke(() =>
         {
-            row = dataGridView1.Rows.Add([progListId, icon, displayName, key, "Loading", "RegEdit", installSize, author, version]);
+            row = dataGridView1.Rows.Add([progListId, icon, displayName, key, "Loading", "More Info", installSize, author, version, userlocal ? "User" : ""]);
         });
     }
 
@@ -43,7 +46,7 @@ internal class ProgramItem
         RegistryKey? prKey = regKey.OpenSubKey(pKey);
         if (prKey == null)
         {
-            Program.PanicBox("Registry Key Missing", $"Registry key {pKey} disappeared.");
+            Program.PanicBox("Registry Key Missing", (userlocal ? "(Local) " : "") + $"Registry key {pKey} disappeared.");
         }
         return prKey;
     }
@@ -135,6 +138,12 @@ internal class ProgramItem
             alreadyErrored = true;
             Program.Log($"Error reading size of {displayName}. Size may be inaccurate.");
         }
+        catch (DirectoryNotFoundException)
+        {
+            if (alreadyErrored) return size;
+            alreadyErrored = true;
+            Program.Log($"Could not find directory for {displayName}. May be already uninstalled?");
+        }
         return size;
     }
 
@@ -142,7 +151,8 @@ internal class ProgramItem
     {
         if (installDirectory == null)
             return "?";
-        return (DirSize(new DirectoryInfo(installDirectory)) / 1024.0 / 1024.0).ToString("0.00 MB");
+        installSizeBytes = DirSize(new DirectoryInfo(installDirectory));
+        return Program.FormatSize(installSizeBytes);
     }
 
     public void UpdateRow()
@@ -158,6 +168,11 @@ internal class ProgramItem
             return;
         dataGridView1.Invoke(() =>
         {
+            if (!IsUninstallable)
+            {
+                frow.DefaultCellStyle.BackColor = Color.DarkGray;
+                frow.DefaultCellStyle.ForeColor = Color.White;
+            }
             frow.Cells[1].Value = icon;
             frow.Cells[2].Value = displayName;
             frow.Cells[4].Value = IsUninstallable ? "Uninstall" : "Disabled";
@@ -196,7 +211,8 @@ internal class ProgramItem
 
     public void OpenInRegEdit()
     {
-        Registry.SetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Applets\\Regedit", "Lastkey", $"Computer\\HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{key}");
+        string machine = userlocal ? "HKEY_CURRENT_USER\\Software" : "HKEY_LOCAL_MACHINE\\SOFTWARE";
+        Registry.SetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Applets\\Regedit", "Lastkey", $"Computer\\{machine}\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{key}");
         System.Diagnostics.Process.Start("cmd.exe", "/C regedit.exe");
     }
 }

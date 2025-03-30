@@ -17,7 +17,6 @@ internal static class Program
     {
         // To customize application configuration such as set high DPI settings or default font,
         // see https://aka.ms/applicationconfiguration.
-        ComWrappers.RegisterForMarshalling(WinFormsComInterop.WinFormsComWrappers.Instance);
         ApplicationConfiguration.Initialize();
         Application.Run(new Form1());
     }
@@ -25,5 +24,19 @@ internal static class Program
     public static void PanicBox(string title, string content)
     {
         MessageBox.Show(content, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
+    }
+
+    public static string FormatSize(long size)
+    {
+        double totalInstallSizeMB = size / (1024.0 * 1024.0);
+        if (totalInstallSizeMB >= 1024)
+        {
+            totalInstallSizeMB /= 1024;
+            return totalInstallSizeMB.ToString("0.00 GB");
+        }
+        else
+        {
+            return totalInstallSizeMB.ToString("0.00 MB");
+        }
     }
 }
