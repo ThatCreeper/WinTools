@@ -41,14 +41,37 @@ internal class ProgramItem
         });
     }
 
-    private RegistryKey? OpenPRKey(string pKey, RegistryKey regKey)
+    public void Uninstall()
     {
-        RegistryKey? prKey = regKey.OpenSubKey(pKey);
-        if (prKey == null)
-        {
-            Program.PanicBox("Registry Key Missing", (userlocal ? "(Local) " : "") + $"Registry key {pKey} disappeared.");
-        }
-        return prKey;
+        if (MessageBox.Show($"Are you sure you want to uninstall {displayName}?", "Uninstall", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
+            return;
+        if (!IsUninstallable) return;
+        Program.Log($"Executing command ${uninstallPath}");
+        System.Diagnostics.Process.Start("cmd.exe", $"/C {uninstallPath}").WaitForExit();
+    }
+
+    public void OpenInRegEdit()
+    {
+        string machine = userlocal ? "HKEY_CURRENT_USER\\Software" : "HKEY_LOCAL_MACHINE\\SOFTWARE";
+        Registry.SetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Applets\\Regedit", "Lastkey", $"Computer\\{machine}\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{key}");
+        System.Diagnostics.Process.Start("cmd.exe", "/C regedit.exe");
+    }
+
+    public void Process(RegistryKey regKey)
+    {
+        RegistryKey? prKey = OpenPRKey(key, regKey);
+        displayName = FetchName(prKey);
+        uninstallPath = FetchUninstallPath(prKey);
+        installDirectory = FetchInstallDirectory(prKey);
+        author = FetchAuthor(prKey);
+        version = FetchVersion(prKey);
+        icon = FetchIcon(prKey);
+
+        UpdateRow();
+
+        installSize = GetInstallSize();
+
+        UpdateRow();
     }
 
     private string FetchName(RegistryKey? prKey)
@@ -155,6 +178,16 @@ internal class ProgramItem
         return Program.FormatSize(installSizeBytes);
     }
 
+    private RegistryKey? OpenPRKey(string pKey, RegistryKey regKey)
+    {
+        RegistryKey? prKey = regKey.OpenSubKey(pKey);
+        if (prKey == null)
+        {
+            Program.PanicBox("Registry Key Missing", (userlocal ? "(Local) " : "") + $"Registry key {pKey} disappeared.");
+        }
+        return prKey;
+    }
+
     public void UpdateRow()
     {
         if (dataGridView1.IsDisposed) return;
@@ -181,38 +214,5 @@ internal class ProgramItem
             frow.Cells[8].Value = version;
             dataGridView1.Update();
         });
-    }
-
-    public void Process(RegistryKey regKey)
-    {
-        RegistryKey? prKey = OpenPRKey(key, regKey);
-        displayName = FetchName(prKey);
-        uninstallPath = FetchUninstallPath(prKey);
-        installDirectory = FetchInstallDirectory(prKey);
-        author = FetchAuthor(prKey);
-        version = FetchVersion(prKey);
-        icon = FetchIcon(prKey);
-
-        UpdateRow();
-
-        installSize = GetInstallSize();
-        
-        UpdateRow();
-    }
-
-    public void Uninstall()
-    {
-        if (MessageBox.Show($"Are you sure you want to uninstall {displayName}?", "Uninstall", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
-                return;
-        if (!IsUninstallable) return;
-        Program.Log($"Executing command ${uninstallPath}");
-        System.Diagnostics.Process.Start("cmd.exe", $"/C {uninstallPath}").WaitForExit();
-    }
-
-    public void OpenInRegEdit()
-    {
-        string machine = userlocal ? "HKEY_CURRENT_USER\\Software" : "HKEY_LOCAL_MACHINE\\SOFTWARE";
-        Registry.SetValue("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Applets\\Regedit", "Lastkey", $"Computer\\{machine}\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\{key}");
-        System.Diagnostics.Process.Start("cmd.exe", "/C regedit.exe");
     }
 }

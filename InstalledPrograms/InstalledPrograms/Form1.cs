@@ -10,61 +10,74 @@ public partial class Form1 : Form
         InitializeComponent();
     }
 
-    private void InternalLog(string what)
+    private void Form1_Load(object sender, EventArgs e)
     {
-        richTextBox1.AppendText($"{what}\n");
-        richTextBox1.Update();
+        Program.Log = Log;
+        LoadPrograms();
+        dataGridView1.CellContentClick += (sender, args) =>
+        {
+            if (args.RowIndex < 0) return;
+            ProgramItem item = Program.programs[(int)(dataGridView1.Rows[args.RowIndex].Cells[0].Value)];
+            if (args.ColumnIndex == 4)
+            {
+                item.Uninstall();
+                LoadPrograms();
+            }
+            else if (args.ColumnIndex == 5)
+            {
+                item.OpenInRegEdit();
+            }
+        };
+    }
+    
+    public void LoadPrograms()
+    {
+        Program.programs.Clear();
+        dataGridView1.Rows.Clear();
+        SetStatusCount();
+        SetStatusSize();
+        new Thread(LoadKeys).Start();
     }
 
-    public void Log(string what)
+    private void LoadKeys()
     {
-        if (IsDisposed) return;
-        Invoke(() => InternalLog(what));
-    }
-
-    private void LoadInitialKeys()
-    {
-        RegistryKey? regKey1 = Registry.LocalMachine?.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall");
-        RegistryKey? regKey2 = Registry.CurrentUser?.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall");
-        if (regKey1 == null || regKey2 == null)
+        RegistryKey? systemKey = Registry.LocalMachine?.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall");
+        RegistryKey? userKey = Registry.CurrentUser?.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall");
+        if (systemKey == null || userKey == null)
         {
             Program.PanicBox("Could not load program list", "(Either LOCAL or USER) Registry key CurrentVersion\\Uninstall not found...?");
             throw new Exception();
         }
-        string[]? keys = regKey1.GetSubKeyNames();
-        if (keys == null)
-        {
-            Program.PanicBox("Machine rogram list empty", "Uninstall.GetSubKeyNames() == null");
-            throw new Exception();
-        }
+        LoadInitialKeys(systemKey, false);
+        LoadInitialKeys(userKey, true);
+        ProcessKeys(systemKey, userKey);
+    }
+
+    private void LoadInitialKeys(RegistryKey regKey, bool isUserLocal)
+    {
+        string[]? keys = regKey.GetSubKeyNames();
+        if (keys == null) return;
         foreach (string key in keys)
         {
-            Program.programs.Add(new ProgramItem(key, dataGridView1, Program.programs.Count, false));
+            Program.programs.Add(new ProgramItem(key, dataGridView1, Program.programs.Count, isUserLocal));
         }
-        keys = regKey2.GetSubKeyNames();
-        if (keys != null)
-        {
-            foreach (string key in keys)
-            {
-                Program.programs.Add(new ProgramItem(key, dataGridView1, Program.programs.Count, true));
-            }
-        }
+    }
 
+    private void ProcessKeys(RegistryKey systemKey, RegistryKey userKey)
+    {
         SetStatusCount();
-        
+
         Parallel.ForEach(Program.programs, program =>
-        //foreach (ProgramItem program in programs)
         {
             try
             {
-                program.Process(program.userlocal ? regKey2 : regKey1);
+                program.Process(program.userlocal ? userKey : systemKey);
             }
             catch (Exception e)
             {
                 Program.PanicBox(program.key, e.Message);
                 throw new Exception();
             }
-            //Log($"Loaded {program.key}\n- Name: {program.displayName}\n- Uninstall: {program.uninstallPath}");
         });
 
         SetStatusSize();
@@ -85,32 +98,15 @@ public partial class Form1 : Form
         statusProgramSize.Text = Program.FormatSize(totalInstallSize);
     }
 
-    public void LoadPrograms()
+    public void Log(string what)
     {
-        Program.programs.Clear();
-        dataGridView1.Rows.Clear();
-        SetStatusCount();
-        SetStatusSize();
-        new Thread(LoadInitialKeys).Start();
+        if (IsDisposed) return;
+        Invoke(() => InternalLog(what));
     }
 
-    private void Form1_Load(object sender, EventArgs e)
+    private void InternalLog(string what)
     {
-        Program.Log = Log;
-        LoadPrograms();
-        dataGridView1.CellContentClick += (sender, args) =>
-        {
-            if (args.RowIndex < 0) return;
-            ProgramItem item = Program.programs[(int)(dataGridView1.Rows[args.RowIndex].Cells[0].Value)];
-            if (args.ColumnIndex == 4)
-            {
-                item.Uninstall();
-                LoadPrograms();
-            }
-            else if (args.ColumnIndex == 5)
-            {
-                item.OpenInRegEdit();
-            }
-        };
+        richTextBox1.AppendText($"{what}\n");
+        richTextBox1.Update();
     }
 }
